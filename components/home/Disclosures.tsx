@@ -31,7 +31,7 @@ const Disclosures = () => {
       </div>
 
       {/* 4. Third Party Policy */}
-      <div className="mb-8 bg-gray-50 p-4 rounded-lg">
+      <div className="mb-8  p-4 rounded-lg">
         <div className="flex items-start gap-2 mb-2">
           <ExternalLink size={16} className="mt-1 flex-shrink-0" />
           <p className="text-[14.5px] font-medium leading-[20.8px]">
