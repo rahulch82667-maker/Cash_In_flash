@@ -8,7 +8,7 @@ const Disclosures = () => {
       
       {/* 1. State Licenses and Notices */}
       <div className="mb-8">
-        <button className="underline text-[14.4px] font-normal">View state licenses and notices.</button>
+        <button className="text-[14.4px] font-normal">View state licenses and notices.</button>
       </div>
 
       {/* 2. New Jersey & New Mexico Residents */}
@@ -27,7 +27,7 @@ const Disclosures = () => {
       {/* 3. NMLS Section */}
       <div className="flex items-center gap-1 mb-8 text-[14.4px] font-medium ml-[60px]">
         <span>NMLS #1671904. View the</span>
-        <button className="underline font-normal">NMLS Consumer Access Database</button>
+        <button className="font-normal">NMLS Consumer Access Database</button>
       </div>
 
       {/* 4. Third Party Policy */}
