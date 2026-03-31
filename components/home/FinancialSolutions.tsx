@@ -6,12 +6,13 @@ import { ArrowRight } from "lucide-react";
 const FinancialSolutions = () => {
   return (
     <section
-      className="relative w-full h-[677px] overflow-hidden flex justify-center"
+      className="relative w-full overflow-hidden flex justify-center"
       style={{
         background: "linear-gradient(118.99deg, #1B3229 0%, #0C1D17 100%)",
       }}
     >
-      <div className="relative w-[1440px] h-full flex-shrink-0">
+      {/* ── DESKTOP LAYOUT ── */}
+      <div className="hidden md:block relative w-[1440px] h-[677px] flex-shrink-0">
         {/* Decorative Blur Overlays */}
         <div
           className="absolute z-0 rounded-full blur-[120px]"
@@ -63,7 +64,6 @@ const FinancialSolutions = () => {
             left: "404px",
           }}
         >
-          {/* Header and Subtext Container */}
           <div className="flex flex-col gap-[18px] w-[633px] items-center mb-[50px]">
             <h2
               className="text-white capitalize"
@@ -148,6 +148,136 @@ const FinancialSolutions = () => {
         >
           Standard data charges may apply
         </p>
+      </div>
+
+      {/* ── MOBILE LAYOUT ── */}
+      <div className="md:hidden relative w-full flex flex-col overflow-hidden">
+        {/* Blur overlays */}
+        <div
+          className="absolute z-0 rounded-full pointer-events-none"
+          style={{
+            width: "260px",
+            height: "260px",
+            top: "-40px",
+            right: "-80px",
+            background: "#0EA46D",
+            opacity: 0.15,
+            filter: "blur(80px)",
+          }}
+        />
+        <div
+          className="absolute z-0 rounded-full pointer-events-none"
+          style={{
+            width: "200px",
+            height: "200px",
+            bottom: "100px",
+            left: "-60px",
+            background: "#27B07D",
+            opacity: 0.15,
+            filter: "blur(70px)",
+          }}
+        />
+
+        {/* Text + Button Block */}
+        <div className="relative z-10 flex flex-col items-start px-6 pt-10">
+          {/* Heading */}
+          <h2
+            className="text-white mb-[18px]"
+            style={{
+              fontFamily: "Tilt Warp",
+              fontSize: "32px",
+              lineHeight: "40px",
+              fontWeight: 400,
+            }}
+          >
+            Smart{" "}
+            <span className="relative inline-block text-[#13EC6D]">
+              Financial Solutions
+              <span className="absolute left-0 bottom-[-2px] w-full h-[6px]">
+                <Image
+                  src="/financial_line.png"
+                  alt="underline"
+                  fill
+                  className="object-contain object-left"
+                />
+              </span>
+            </span>{" "}
+            Right At <br />
+            Your Fingertips.
+          </h2>
+          {/* Subtext */}
+          <p
+            className="text-white mb-8"
+            style={{
+              fontFamily: "Poppins",
+              fontSize: "15px",
+              lineHeight: "24px",
+              fontWeight: 400,
+            }}
+          >
+            The Cash in Flash app helps you set goals and save automatically.
+          </p>
+
+          {/* CTA Button */}
+          <button
+            className="flex items-center justify-center gap-[6px] transition-transform active:scale-95 mb-4"
+            style={{
+              width: "243px",
+              height: "46px",
+              borderRadius: "40px",
+              background: "linear-gradient(90deg, #15C15D 0%, #13EC6D 100%)",
+              boxShadow:
+                "0px 10px 15px -3px #0000001A, 0px 4px 6px -4px #0000001A",
+            }}
+          >
+            <span
+              className="text-white"
+              style={{
+                fontFamily: "Poppins",
+                fontSize: "14px",
+                fontWeight: 500,
+                lineHeight: "22px",
+              }}
+            >
+              Get the Cash in Flash app
+            </span>
+            <ArrowRight
+              className="text-white w-[14px] h-[14px]"
+              strokeWidth={2.5}
+            />
+          </button>
+
+          {/* Disclaimer */}
+          <p
+            className="text-white italic mb-6"
+            style={{
+              fontFamily: "Arimo",
+              fontSize: "13px",
+              lineHeight: "20px",
+              fontWeight: 400,
+            }}
+          >
+            Standard data charges may apply
+          </p>
+        </div>
+
+        {/* App image — bottom, full width */}
+        <div className="relative z-10 w-full mt-[-58px] mb-[50px] flex justify-center">
+          <div
+            className="relative"
+            style={{
+              width: "330px",
+              height: "224.86px",
+            }}
+          >
+            <Image
+              src="/financial_img.png"
+              alt="App Preview"
+              fill
+              className="object-contain object-bottom"
+            />
+          </div>
+        </div>
       </div>
     </section>
   );
