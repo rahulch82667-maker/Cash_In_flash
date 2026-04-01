@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Poppins, Tilt_Warp } from "next/font/google";
 import "./globals.css";
+import { Providers } from "./providers";
 
 /* Poppins (used for body text, buttons, etc.) */
 const poppins = Poppins({
@@ -32,7 +33,7 @@ export default function RootLayout({
       className={`${poppins.variable} ${tiltWarp.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col font-[var(--font-poppins)]">
-        {children}
+        <Providers>{children}</Providers>{" "}
       </body>
     </html>
   );
