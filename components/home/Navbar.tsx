@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import { MapPin, ArrowRight, X, ChevronDown, ChevronUp } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 const poppinsMenuHeader = {
   fontFamily: "'Poppins', sans-serif",
@@ -27,6 +28,7 @@ const Navbar = () => {
   const [activeDropdown, setActiveDropdown] = useState<"loans" | "save" | null>(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [mobileLoansOpen, setMobileLoansOpen] = useState(true);
+  const router = useRouter() ;
 
   const DesktopDropdownContent = ({ type }: { type: "loans" | "save" }) => {
     const isLoans = type === "loans";
@@ -151,7 +153,7 @@ const Navbar = () => {
               <button className="w-[100px] lg:w-[125px] h-[47px] cursor-pointer rounded-[40px] bg-gradient-to-r from-[#15C15D] to-[#13EC6D] font-['Poppins'] font-medium text-white shadow-md hover:shadow-lg transition-all">
                 Apply now
               </button>
-              <button className="w-[100px] lg:w-[125px] h-[47px] cursor-pointer rounded-[40px] border-2 border-[#15C15D4D] bg-white font-['Poppins'] font-medium text-[#353535] hover:border-[#15C15D] transition-all">
+              <button onClick={()=> router.push("/login")} className="w-[100px] lg:w-[125px] h-[47px] cursor-pointer rounded-[40px] border-2 border-[#15C15D4D] bg-white font-['Poppins'] font-medium text-[#353535] hover:border-[#15C15D] transition-all">
                 Log in
               </button>
             </div>
