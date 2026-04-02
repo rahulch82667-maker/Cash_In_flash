@@ -39,6 +39,7 @@ interface AuthState {
   error: string | null;
   success: boolean;
   loginSuccess: boolean;
+  initialCheckComplete: boolean;
   forgotPasswordSuccess: boolean;
   resetPasswordSuccess: boolean;
 }
@@ -52,6 +53,7 @@ const initialState: AuthState = {
   loginSuccess: false,
   forgotPasswordSuccess: false,
   resetPasswordSuccess: false,
+  initialCheckComplete: false
 };
 
 // Register async thunk
@@ -266,10 +268,12 @@ const authSlice = createSlice({
         state.loading = false;
         state.user = action.payload.user;
         state.error = null;
+        state.initialCheckComplete = true;
       })
       .addCase(getCurrentUser.rejected, (state) => {
         state.loading = false;
         state.user = null;
+        state.initialCheckComplete = true;
       })
       // Logout
       .addCase(logoutUser.fulfilled, (state) => {

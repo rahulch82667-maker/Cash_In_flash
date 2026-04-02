@@ -1,9 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
-import { MapPin, ArrowRight, X, ChevronDown, ChevronUp } from "lucide-react";
+import { MapPin, ArrowRight, X, ChevronDown, ChevronUp, User, LogOut, Mail, Phone, UserCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
+import { logoutUser, getCurrentUser } from '@/store/slices/authSlice';
 
 const poppinsMenuHeader = {
   fontFamily: "'Poppins', sans-serif",
@@ -28,7 +30,44 @@ const Navbar = () => {
   const [activeDropdown, setActiveDropdown] = useState<"loans" | "save" | null>(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [mobileLoansOpen, setMobileLoansOpen] = useState(true);
-  const router = useRouter() ;
+  const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
+  const profileDropdownRef = useRef<HTMLDivElement>(null);
+  const router = useRouter();
+  const dispatch = useAppDispatch();
+  const { user, loading, initialCheckComplete } = useAppSelector((state) => state.auth);
+  const hasCheckedAuth = useRef(false);
+
+  // Only fetch user once on mount
+  useEffect(() => {
+    if (!hasCheckedAuth.current && !user && !initialCheckComplete) {
+      hasCheckedAuth.current = true;
+      dispatch(getCurrentUser());
+    }
+  }, [dispatch, user, initialCheckComplete]);
+
+  // Close profile dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (profileDropdownRef.current && !profileDropdownRef.current.contains(event.target as Node)) {
+        setIsProfileDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const handleLogout = async () => {
+    await dispatch(logoutUser());
+    setIsProfileDropdownOpen(false);
+    router.push('/');
+  };
+
+  const handleLoginClick = () => {
+    router.push('/login');
+  };
+
+
 
   const DesktopDropdownContent = ({ type }: { type: "loans" | "save" }) => {
     const isLoans = type === "loans";
@@ -99,6 +138,67 @@ const Navbar = () => {
     );
   };
 
+  // Profile Dropdown Component
+  const ProfileDropdown = () => {
+    if (!isProfileDropdownOpen) return null;
+    
+    return (
+      <div className="absolute top-full right-0 mt-2 w-80 bg-white rounded-lg shadow-xl border border-gray-100 z-50 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
+        {/* User Header */}
+        <div className="bg-gradient-to-r from-[#15C15D] to-[#13EC6D] px-4 py-3">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center">
+              <UserCircle className="w-6 h-6 text-[#15C15D]" />
+            </div>
+            <div>
+              <p className="text-white font-semibold text-sm">Logged in as</p>
+              <p className="text-white font-bold text-sm truncate">{user?.fullName}</p>
+            </div>
+          </div>
+        </div>
+        
+        {/* User Info */}
+        <div className="p-4 border-b border-gray-100">
+          <div className="flex items-center gap-3 mb-3">
+            <Mail className="w-4 h-4 text-gray-400" />
+            <div className="flex-1">
+              <p className="text-xs text-gray-500">Email</p>
+              <p className="text-sm font-medium text-gray-800 truncate">{user?.email}</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-3">
+            <Phone className="w-4 h-4 text-gray-400" />
+            <div className="flex-1">
+              <p className="text-xs text-gray-500">Phone</p>
+              <p className="text-sm font-medium text-gray-800">{user?.phoneNumber}</p>
+            </div>
+          </div>
+        </div>
+        
+        {/* Menu Items */}
+        <div className="py-2">
+          <button 
+            onClick={() => {
+              setIsProfileDropdownOpen(false);
+              router.push('/profile');
+            }}
+            className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 transition-colors flex items-center gap-3"
+          >
+            <User className="w-4 h-4" />
+            <span>My Profile</span>
+          </button>
+          <button 
+            onClick={handleLogout}
+            className="w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-red-50 transition-colors flex items-center gap-3"
+          >
+            <LogOut className="w-4 h-4" />
+            <span>Logout</span>
+          </button>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <nav className="fixed top-0 left-0 w-full z-50 flex flex-col items-center bg-white shadow-sm md:shadow-none">
       
@@ -150,12 +250,36 @@ const Navbar = () => {
             </div>
             
             <div className="flex gap-[10px]">
-              <button className="w-[100px] lg:w-[125px] h-[47px] cursor-pointer rounded-[40px] bg-gradient-to-r from-[#15C15D] to-[#13EC6D] font-['Poppins'] font-medium text-white shadow-md hover:shadow-lg transition-all">
+              <button 
+                className="w-[100px] lg:w-[125px] h-[47px] cursor-pointer rounded-[40px] bg-gradient-to-r from-[#15C15D] to-[#13EC6D] font-['Poppins'] font-medium text-white shadow-md hover:shadow-lg transition-all"
+              >
                 Apply now
               </button>
-              <button onClick={()=> router.push("/login")} className="w-[100px] lg:w-[125px] h-[47px] cursor-pointer rounded-[40px] border-2 border-[#15C15D4D] bg-white font-['Poppins'] font-medium text-[#353535] hover:border-[#15C15D] transition-all">
-                Log in
-              </button>
+              
+              {/* Show login or profile button based on auth state */}
+              {initialCheckComplete && !loading && (
+                <>
+                  {user ? (
+                    <div className="relative" ref={profileDropdownRef}>
+                      <button 
+                        onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
+                        className="w-[100px] lg:w-[125px] h-[47px] cursor-pointer rounded-[40px] border-2 border-[#15C15D] bg-white font-['Poppins'] font-medium text-[#15C15D] hover:bg-[#15C15D] hover:text-white transition-all flex items-center justify-center gap-2"
+                      >
+                        <User className="w-4 h-4" />
+                        <span>Profile</span>
+                      </button>
+                      <ProfileDropdown />
+                    </div>
+                  ) : (
+                    <button 
+                      onClick={handleLoginClick}
+                      className="w-[100px] lg:w-[125px] h-[47px] cursor-pointer rounded-[40px] border-2 border-[#15C15D4D] bg-white font-['Poppins'] font-medium text-[#353535] hover:border-[#15C15D] transition-all"
+                    >
+                      Log in
+                    </button>
+                  )}
+                </>
+              )}
             </div>
           </div>
         </div>
@@ -189,6 +313,19 @@ const Navbar = () => {
       {isMobileMenuOpen && (
         <div className="md:hidden fixed top-[112px] left-0 w-full h-[calc(100vh-112px)] bg-[#0C1D17] z-50 flex flex-col p-6 animate-in slide-in-from-right duration-300 overflow-y-auto">
           <div className="flex flex-col gap-6 text-white pb-10">
+            
+            {/* User Info for Mobile */}
+            {user && (
+              <div className="bg-white/10 rounded-lg p-4 mb-2">
+                <div className="flex items-center gap-3 mb-3">
+                  <UserCircle className="w-10 h-10 text-white" />
+                  <div>
+                    <p className="text-white font-semibold">{user.fullName}</p>
+                    <p className="text-white/70 text-sm">{user.email}</p>
+                  </div>
+                </div>
+              </div>
+            )}
             
             <div className="flex flex-col">
               <button onClick={() => setMobileLoansOpen(!mobileLoansOpen)} className="flex items-center justify-between py-3 border-b border-gray-700 w-full h-full">
@@ -257,8 +394,26 @@ const Navbar = () => {
           </div>
 
           <div className="mt-auto flex flex-row gap-4 pb-10">
-            <button className="w-full h-[55px] cursor-pointer rounded-[40px] bg-gradient-to-r from-[#15C15D] to-[#13EC6D] font-['Poppins'] font-semibold text-white text-[18px]">Apply now</button>
-            <button className="w-full h-[55px] cursor-pointer rounded-[40px] border-2 border-[#15C15D4D] bg-white font-['Poppins'] font-semibold text-[#353535] text-[18px]">Log in</button>
+            <button 
+              className="w-full h-[55px] cursor-pointer rounded-[40px] bg-gradient-to-r from-[#15C15D] to-[#13EC6D] font-['Poppins'] font-semibold text-white text-[18px]"
+            >
+              Apply now
+            </button>
+            {user ? (
+              <button 
+                onClick={handleLogout}
+                className="w-full h-[55px] cursor-pointer rounded-[40px] border-2 border-red-500 bg-white font-['Poppins'] font-semibold text-red-500 text-[18px] hover:bg-red-500 hover:text-white transition-all"
+              >
+                Logout
+              </button>
+            ) : (
+              <button 
+                onClick={handleLoginClick}
+                className="w-full h-[55px] cursor-pointer rounded-[40px] border-2 border-[#15C15D4D] bg-white font-['Poppins'] font-semibold text-[#353535] text-[18px]"
+              >
+                Log in
+              </button>
+            )}
           </div>
         </div>
       )}
