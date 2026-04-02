@@ -15,6 +15,16 @@ export interface LoginData {
   password: string;
 }
 
+export interface ForgotPasswordData {
+  email: string;
+}
+
+export interface ResetPasswordData {
+  token: string;
+  password: string;
+  confirmPassword: string;
+}
+
 export interface User {
   id: string;
   fullName: string;
@@ -29,6 +39,8 @@ interface AuthState {
   error: string | null;
   success: boolean;
   loginSuccess: boolean;
+  forgotPasswordSuccess: boolean;
+  resetPasswordSuccess: boolean;
 }
 
 // Initial state
@@ -38,6 +50,8 @@ const initialState: AuthState = {
   error: null,
   success: false,
   loginSuccess: false,
+  forgotPasswordSuccess: false,
+  resetPasswordSuccess: false,
 };
 
 // Register async thunk
@@ -59,6 +73,32 @@ export const loginUser = createAsyncThunk(
   async (loginData: LoginData, { rejectWithValue }) => {
     try {
       const response = await axios.post('/api/login', loginData);
+      return response.data;
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data || error.message);
+    }
+  }
+);
+
+// Forgot Password async thunk
+export const forgotPassword = createAsyncThunk(
+  'auth/forgotPassword',
+  async (data: ForgotPasswordData, { rejectWithValue }) => {
+    try {
+      const response = await axios.post('/api/auth/forgot-password', data);
+      return response.data;
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data || error.message);
+    }
+  }
+);
+
+// Reset Password async thunk
+export const resetPassword = createAsyncThunk(
+  'auth/resetPassword',
+  async (data: ResetPasswordData, { rejectWithValue }) => {
+    try {
+      const response = await axios.post('/api/auth/reset-password', data);
       return response.data;
     } catch (error: any) {
       return rejectWithValue(error.response?.data || error.message);
@@ -102,12 +142,20 @@ const authSlice = createSlice({
       state.error = null;
       state.success = false;
       state.loginSuccess = false;
+      state.forgotPasswordSuccess = false;
+      state.resetPasswordSuccess = false;
     },
     clearError: (state) => {
       state.error = null;
     },
     resetLoginSuccess: (state) => {
       state.loginSuccess = false;
+    },
+    resetForgotPasswordSuccess: (state) => {
+      state.forgotPasswordSuccess = false;
+    },
+    resetResetPasswordSuccess: (state) => {
+      state.resetPasswordSuccess = false;
     },
   },
   extraReducers: (builder) => {
@@ -168,6 +216,48 @@ const authSlice = createSlice({
           toast.error('Login failed. Please try again.');
         }
       })
+      // Forgot Password
+      .addCase(forgotPassword.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+        state.forgotPasswordSuccess = false;
+      })
+      .addCase(forgotPassword.fulfilled, (state, action: PayloadAction<{ message: string }>) => {
+        state.loading = false;
+        state.forgotPasswordSuccess = true;
+        state.error = null;
+        toast.success(action.payload.message);
+      })
+      .addCase(forgotPassword.rejected, (state, action: PayloadAction<any>) => {
+        state.loading = false;
+        state.forgotPasswordSuccess = false;
+        
+        const errorMessage = action.payload?.error || 'Failed to send reset link. Please try again.';
+        state.error = errorMessage;
+        toast.error(errorMessage);
+      })
+      // Reset Password
+      .addCase(resetPassword.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+        state.resetPasswordSuccess = false;
+      })
+      .addCase(resetPassword.fulfilled, (state, action: PayloadAction<{ message: string }>) => {
+        state.loading = false;
+        state.resetPasswordSuccess = true;
+        state.error = null;
+        toast.success(action.payload.message);
+      })
+      .addCase(resetPassword.rejected, (state, action: PayloadAction<any>) => {
+        state.loading = false;
+        state.resetPasswordSuccess = false;
+        
+        const errorMessage = action.payload?.error || 
+                           (action.payload?.errors && action.payload.errors[0]) || 
+                           'Failed to reset password. Please try again.';
+        state.error = errorMessage;
+        toast.error(errorMessage);
+      })
       // Get Current User
       .addCase(getCurrentUser.pending, (state) => {
         state.loading = true;
@@ -190,5 +280,11 @@ const authSlice = createSlice({
   },
 });
 
-export const { resetState, clearError, resetLoginSuccess } = authSlice.actions;
+export const { 
+  resetState, 
+  clearError, 
+  resetLoginSuccess, 
+  resetForgotPasswordSuccess, 
+  resetResetPasswordSuccess 
+} = authSlice.actions;
 export default authSlice.reducer;
