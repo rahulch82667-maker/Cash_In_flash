@@ -9,7 +9,13 @@ export async function GET(request: NextRequest) {
     const currentUser = await getCurrentUser();
     
     if (!currentUser) {
-      return null ;
+      return NextResponse.json(
+        {
+          success: false,
+          error: "Not authenticated",
+        },
+        { status: 401 }
+      );
     }
     
     // Connect to database
