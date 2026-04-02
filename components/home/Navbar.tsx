@@ -151,7 +151,6 @@ const Navbar = () => {
               <UserCircle className="w-6 h-6 text-[#15C15D]" />
             </div>
             <div>
-              <p className="text-white font-semibold text-sm">Logged in as</p>
               <p className="text-white font-bold text-sm truncate">{user?.fullName}</p>
             </div>
           </div>
@@ -177,16 +176,6 @@ const Navbar = () => {
         
         {/* Menu Items */}
         <div className="py-2">
-          <button 
-            onClick={() => {
-              setIsProfileDropdownOpen(false);
-              router.push('/profile');
-            }}
-            className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 transition-colors flex items-center gap-3"
-          >
-            <User className="w-4 h-4" />
-            <span>My Profile</span>
-          </button>
           <button 
             onClick={handleLogout}
             className="w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-red-50 transition-colors flex items-center gap-3"
