@@ -85,6 +85,12 @@ const Navbar = () => {
     router.push("/login");
   };
 
+  // Navigation handlers for dropdown items
+  const handleNavigation = (path: string) => {
+    router.push(path);
+    setActiveDropdown(null);
+  };
+
   const DesktopDropdownContent = ({ type }: { type: "loans" | "save" }) => {
     const isLoans = type === "loans";
     return (
@@ -102,19 +108,25 @@ const Navbar = () => {
               <div className="flex flex-col gap-[17px]">
                 {(isLoans
                   ? [
-                      "Cash Advance",
-                      "Contact Us",
-                      "Make a Payment",
-                      "Locations",
+                      { label: "Cash Advance", path: "/cash-advance" },
+                      { label: "Contact Us", path: "/contact-us" },
+                      { label: "Make a Payment", path: "/make-payment" },
+                      { label: "Locations", path: "/location-finder" },
                     ]
-                  : ["Tools", "FAQ", "Glossary of financial terms", "Contact"]
+                  : [
+                      { label: "Tools", path: "/tools" },
+                      { label: "FAQ", path: "/faq" },
+                      { label: "Glossary of financial terms", path: "/glossary" },
+                      { label: "Contact", path: "/contact-us" },
+                    ]
                 ).map((item) => (
                   <div
-                    key={item}
+                    key={item.label}
+                    onClick={() => handleNavigation(item.path)}
                     className="flex items-center gap-[7px] group cursor-pointer w-max"
                   >
                     <span className="text-white font-medium text-[16px] leading-[19.2px] font-['Poppins'] group-hover:text-[#13EC6D] transition-colors">
-                      {item}
+                      {item.label}
                     </span>
                     <ArrowRight
                       className="w-[14px] h-[16px] text-white group-hover:text-[#13EC6D]"
@@ -138,13 +150,17 @@ const Navbar = () => {
                   Tools
                 </h3>
                 <div className="flex flex-col gap-[17px]">
-                  {["FAQs", "Glossary of financial terms"].map((item) => (
+                  {[
+                    { label: "FAQs", path: "/faq" },
+                    { label: "Glossary of financial terms", path: "/glossary" },
+                  ].map((item) => (
                     <div
-                      key={item}
+                      key={item.label}
+                      onClick={() => handleNavigation(item.path)}
                       className="flex items-center gap-[7px] group cursor-pointer w-max"
                     >
                       <span className="text-white font-medium text-[16px] leading-[19.2px] font-['Poppins'] group-hover:text-[#13EC6D]">
-                        {item}
+                        {item.label}
                       </span>
                       <ArrowRight
                         className="w-[14px] h-[16px] text-white group-hover:text-[#13EC6D]"
@@ -298,9 +314,11 @@ const Navbar = () => {
                 </span>
               </div>
 
-              <span className="font-['Poppins'] font-medium text-[15px] lg:text-[16px] text-[#353535] cursor-pointer">
-                Location
-              </span>
+              <Link href="/location-finder">
+                <span className="font-['Poppins'] font-medium text-[15px] lg:text-[16px] text-[#353535] cursor-pointer hover:text-[#15C15D] transition-colors">
+                  Location
+                </span>
+              </Link>
 
               <div
                 className="relative h-full flex items-center px-[10px] lg:px-[14px] cursor-pointer group"
@@ -327,7 +345,10 @@ const Navbar = () => {
               </div>
             </Link>
             <div className="flex gap-[10px]">
-              <button className="w-[100px] lg:w-[125px] h-[47px] cursor-pointer rounded-[40px] bg-gradient-to-r from-[#15C15D] to-[#13EC6D] font-['Poppins'] font-medium text-white shadow-md hover:shadow-lg transition-all">
+              <button 
+                onClick={() => router.push("/apply")}
+                className="w-[100px] lg:w-[125px] h-[47px] cursor-pointer rounded-[40px] bg-gradient-to-r from-[#15C15D] to-[#13EC6D] font-['Poppins'] font-medium text-white shadow-md hover:shadow-lg transition-all"
+              >
                 Apply now
               </button>
 
@@ -427,6 +448,7 @@ const Navbar = () => {
                 </div>
               </div>
             )}
+            
             <div className="flex flex-col">
               <button
                 onClick={() => setMobileLoansOpen(!mobileLoansOpen)}
@@ -452,31 +474,34 @@ const Navbar = () => {
                   >
                     LOANS
                   </h3>
-                  {[
-                    "Cash Advance",
-                    "Contact Us",
-                    "Make a Payment",
-                    "Locations",
-                  ].map((item) => (
-                    <div
-                      key={item}
-                      className="flex items-center gap-[7px] group cursor-pointer w-max"
-                    >
-                      <span
-                        style={poppinsMenuLinkText}
-                        className="text-white font-medium text-[16px] leading-[19.2px] font-['Poppins'] group-hover:text-[#13EC6D]"
-                      >
-                        {item}
-                      </span>
-                      <ArrowRight
-                        className="w-[14px] h-[16px] text-white group-hover:text-[#13EC6D]"
-                        strokeWidth={3}
-                      />
-                    </div>
-                  ))}
+                  <div onClick={() => { router.push("/cash-advance"); setIsMobileMenuOpen(false); }} className="flex items-center gap-[7px] group cursor-pointer w-max">
+                    <span className="text-white font-medium text-[16px] leading-[19.2px] font-['Poppins'] group-hover:text-[#13EC6D]">
+                      Cash Advance
+                    </span>
+                    <ArrowRight className="w-[14px] h-[16px] text-white group-hover:text-[#13EC6D]" strokeWidth={3} />
+                  </div>
+                  <div onClick={() => { router.push("/contact-us"); setIsMobileMenuOpen(false); }} className="flex items-center gap-[7px] group cursor-pointer w-max">
+                    <span className="text-white font-medium text-[16px] leading-[19.2px] font-['Poppins'] group-hover:text-[#13EC6D]">
+                      Contact Us
+                    </span>
+                    <ArrowRight className="w-[14px] h-[16px] text-white group-hover:text-[#13EC6D]" strokeWidth={3} />
+                  </div>
+                  <div onClick={() => { router.push("/make-payment"); setIsMobileMenuOpen(false); }} className="flex items-center gap-[7px] group cursor-pointer w-max">
+                    <span className="text-white font-medium text-[16px] leading-[19.2px] font-['Poppins'] group-hover:text-[#13EC6D]">
+                      Make a Payment
+                    </span>
+                    <ArrowRight className="w-[14px] h-[16px] text-white group-hover:text-[#13EC6D]" strokeWidth={3} />
+                  </div>
+                  <div onClick={() => { router.push("/location-finder"); setIsMobileMenuOpen(false); }} className="flex items-center gap-[7px] group cursor-pointer w-max">
+                    <span className="text-white font-medium text-[16px] leading-[19.2px] font-['Poppins'] group-hover:text-[#13EC6D]">
+                      Locations
+                    </span>
+                    <ArrowRight className="w-[14px] h-[16px] text-white group-hover:text-[#13EC6D]" strokeWidth={3} />
+                  </div>
                 </div>
               )}
             </div>
+
             <div className="flex flex-col gap-[17px] mt-[17px] pl-[14px]">
               <h3
                 style={poppinsMenuHeader}
@@ -484,24 +509,20 @@ const Navbar = () => {
               >
                 TOOLS
               </h3>
-              {["FAQs", "Glossary of financial terms"].map((item) => (
-                <div
-                  key={item}
-                  className="flex items-center gap-[7px] group cursor-pointer w-max"
-                >
-                  <span
-                    style={poppinsMenuLinkText}
-                    className="text-white font-medium text-[16px] leading-[19.2px] font-['Poppins'] group-hover:text-[#13EC6D]"
-                  >
-                    {item}
-                  </span>
-                  <ArrowRight
-                    className="w-[14px] h-[16px] text-white group-hover:text-[#13EC6D]"
-                    strokeWidth={3}
-                  />
-                </div>
-              ))}
+              <div onClick={() => { router.push("/faq"); setIsMobileMenuOpen(false); }} className="flex items-center gap-[7px] group cursor-pointer w-max">
+                <span className="text-white font-medium text-[16px] leading-[19.2px] font-['Poppins'] group-hover:text-[#13EC6D]">
+                  FAQs
+                </span>
+                <ArrowRight className="w-[14px] h-[16px] text-white group-hover:text-[#13EC6D]" strokeWidth={3} />
+              </div>
+              <div onClick={() => { router.push("/glossary"); setIsMobileMenuOpen(false); }} className="flex items-center gap-[7px] group cursor-pointer w-max">
+                <span className="text-white font-medium text-[16px] leading-[19.2px] font-['Poppins'] group-hover:text-[#13EC6D]">
+                  Glossary of financial terms
+                </span>
+                <ArrowRight className="w-[14px] h-[16px] text-white group-hover:text-[#13EC6D]" strokeWidth={3} />
+              </div>
             </div>
+
             <div className="flex flex-col gap-[17px] mt-[17px] pl-[14px]">
               <h3
                 style={poppinsMenuHeader}
@@ -541,14 +562,21 @@ const Navbar = () => {
                 />
               </div>
             </div>
+
             <div className="flex flex-col mt-4">
-              <button className="flex items-center justify-between py-3 border-b border-gray-700 w-full h-full">
-                <span className="font-semibold text-[18px] text-white font-['Poppins']">
-                  Location
-                </span>
-                <ChevronDown className="w-[18px] h-[18px] text-[#ffffff]" />
-              </button>
+              <Link href="/location-finder">
+                <button 
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="flex items-center justify-between py-3 border-b border-gray-700 w-full h-full"
+                >
+                  <span className="font-semibold text-[18px] text-white font-['Poppins']">
+                    Location
+                  </span>
+                  <ChevronDown className="w-[18px] h-[18px] text-[#ffffff]" />
+                </button>
+              </Link>
             </div>
+            
             <div className="flex flex-col">
               <button className="flex items-center justify-between py-3 border-b border-gray-700 w-full h-full">
                 <span className="font-semibold text-[18px] text-white font-['Poppins']">
@@ -557,7 +585,8 @@ const Navbar = () => {
                 <ChevronDown className="w-[18px] h-[18px] text-[#ffffff]" />
               </button>
             </div>
-            <Link href="/location-finder" className="block w-fit">
+            
+            <Link href="/location-finder" className="block w-fit" onClick={() => setIsMobileMenuOpen(false)}>
               <div className="flex items-center gap-2 py-3 mt-4 cursor-pointer group">
                 <MapPin
                   className="text-white transition-transform group-hover:scale-110"
@@ -567,11 +596,14 @@ const Navbar = () => {
                   Find a Store
                 </span>
               </div>
-            </Link>{" "}
+            </Link>
           </div>
 
           <div className="mt-auto flex flex-row gap-4 pb-10">
-            <button className="w-full h-[55px] cursor-pointer rounded-[40px] bg-gradient-to-r from-[#15C15D] to-[#13EC6D] font-['Poppins'] font-semibold text-white text-[18px]">
+            <button 
+              onClick={() => { router.push("/apply"); setIsMobileMenuOpen(false); }}
+              className="w-full h-[55px] cursor-pointer rounded-[40px] bg-gradient-to-r from-[#15C15D] to-[#13EC6D] font-['Poppins'] font-semibold text-white text-[18px]"
+            >
               Apply now
             </button>
             {user ? (
