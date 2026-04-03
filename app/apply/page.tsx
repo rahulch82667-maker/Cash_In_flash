@@ -15,12 +15,14 @@ export default function ApplyPage() {
   const handleNext = () => {
     if (currentStep < totalSteps) {
       setCurrentStep(currentStep + 1);
+      window.scrollTo({ top: 0, behavior: "smooth" });
     }
   };
 
   const handleBack = () => {
     if (currentStep > 1) {
       setCurrentStep(currentStep - 1);
+      window.scrollTo({ top: 0, behavior: "smooth" });
     }
   };
 

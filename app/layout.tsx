@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Poppins, Tilt_Warp } from "next/font/google";
 import "./globals.css";
+import "react-toastify/dist/ReactToastify.css";
 import { Providers } from "./providers";
 
 /* Poppins (used for body text, buttons, etc.) */

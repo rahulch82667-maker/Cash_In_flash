@@ -1,38 +1,100 @@
-import { UploadCloud } from "lucide-react";
+import { UploadCloud, CheckCircle, Loader2 } from "lucide-react";
+import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { submitApplication, resetApplication } from "@/store/slices/applicationSlice";
+import { RootState, AppDispatch } from "@/store/store";
+import { toast } from "react-toastify";
+import { useRouter } from "next/navigation";
 
 const DocumentsForm = ({ onBack }: { onBack: () => void; }) => {
+  const dispatch = useDispatch<AppDispatch>();
+  const router = useRouter();
+  const applicationState = useSelector((state: RootState) => state.application);
+  const { loading } = applicationState;
+
+  const [frontId, setFrontId] = useState<File | null>(null);
+  const [paystub, setPaystub] = useState<File | null>(null);
+  const [bankStatement, setBankStatement] = useState<File | null>(null);
+
   const labelStyle = "text-[#555] text-[12px] font-semibold uppercase tracking-wide mb-1.5 block";
   
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, setter: React.Dispatch<React.SetStateAction<File | null>>) => {
+    if (e.target.files && e.target.files[0]) {
+      // Very basic validation
+      if (e.target.files[0].size > 10 * 1024 * 1024) {
+        toast.error("File is too large. Max size is 10MB");
+        return;
+      }
+      setter(e.target.files[0]);
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!applicationState.personalInfo || !applicationState.incomeInfo || !applicationState.financialInfo) {
+      toast.error("Missing information from previous steps.");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("personalInfo", JSON.stringify(applicationState.personalInfo));
+    formData.append("incomeInfo", JSON.stringify(applicationState.incomeInfo));
+    formData.append("financialInfo", JSON.stringify(applicationState.financialInfo));
+
+    if (frontId) formData.append("frontId", frontId);
+    if (paystub) formData.append("paystub", paystub);
+    if (bankStatement) formData.append("bankStatement", bankStatement);
+
+    const resultAction = await dispatch(submitApplication(formData));
+
+    if (submitApplication.fulfilled.match(resultAction)) {
+      toast.success("Application successfully submitted!");
+      dispatch(resetApplication());
+      setTimeout(() => {
+         router.push('/');
+      }, 2000);
+    } else {
+      toast.error(resultAction.payload as string || "Failed to submit application");
+    }
+  };
+
   const docTypes = [
-    { name: "Driver's License / State ID", desc: "Front copy, clear and valid" },
-    { name: "Most Recent Paystub", desc: "Dated within last 30 days" },
-    { name: "Last 60 Days Bank Statements", desc: "Full statements showing direct deposit" },
+    { name: "Driver's License / State ID", desc: "Front copy, clear and valid", state: frontId, setter: setFrontId, id: "frontId" },
+    { name: "Most Recent Paystub", desc: "Dated within last 30 days", state: paystub, setter: setPaystub, id: "paystub" },
+    { name: "Last 60 Days Bank Statements", desc: "Full statements showing direct deposit", state: bankStatement, setter: setBankStatement, id: "bankStatement" },
   ];
 
   return (
-    <form className="space-y-8" onSubmit={(e) => { e.preventDefault(); alert("Application Submitted!"); }}>
-      <h2 className="text-[18px] font-bold text-[#2D2D32] mb-6">Document Upload</h2>
+    <form className="space-y-8" onSubmit={handleSubmit}>
+      <h2 className="text-[18px] font-bold text-[#2D2D32] mb-6">Document Upload (Optional)</h2>
 
       {docTypes.map((doc, idx) => (
-        <div key={idx} className="border-2 border-dashed border-gray-200 rounded-xl p-6 bg-gray-50 hover:border-[#15C15D] hover:bg-[#F0FDF4] transition-colors cursor-pointer group">
+        <div key={idx} className={`border-2 border-dashed ${doc.state ? 'border-[#15C15D] bg-[#F0FDF4]' : 'border-gray-200 bg-gray-50'} rounded-xl p-6 hover:border-[#15C15D] hover:bg-[#F0FDF4] transition-colors cursor-pointer group relative overflow-hidden`} onClick={() => document.getElementById(doc.id)?.click()}>
           <label className={labelStyle}>{doc.name}</label>
           <p className="text-gray-500 text-[13px] mb-4">{doc.desc}</p>
           
           <div className="flex flex-col items-center justify-center py-4 text-center">
-            <UploadCloud className="text-gray-400 group-hover:text-[#15C15D] mb-3" size={32} />
-            <p className="font-medium text-[14px]">Click to upload or drag & drop</p>
-            <p className="text-gray-400 text-[12px]">Max size: 10MB (PDF, JPG, PNG)</p>
+            {doc.state ? (
+               <><CheckCircle className="text-[#15C15D] mb-3" size={32} />
+               <p className="font-medium text-[14px] text-[#15C15D]">{doc.state.name}</p></>
+            ) : (
+                <><UploadCloud className="text-gray-400 group-hover:text-[#15C15D] mb-3" size={32} />
+                <p className="font-medium text-[14px]">Click to upload or drag & drop</p>
+                <p className="text-gray-400 text-[12px]">Max size: 10MB (PDF, JPG, PNG)</p></>
+            )}
+            
           </div>
-          <input type="file" className="sr-only" required />
+          <input id={doc.id} type="file" className="sr-only" onChange={(e) => handleFileChange(e, doc.setter)} accept=".pdf,.jpg,.jpeg,.png" />
         </div>
       ))}
 
       <div className="grid grid-cols-2 gap-4 mt-10 pt-6">
-        <button type="button" onClick={onBack} className="h-[60px] border border-gray-300 rounded-full font-semibold text-gray-600">
+        <button type="button" onClick={onBack} disabled={loading} className="h-[60px] border border-gray-300 rounded-full font-semibold text-gray-600 disabled:opacity-50">
           ← Back
         </button>
-        <button type="submit" className="h-[60px] bg-[#15C15D] text-white rounded-full font-semibold shadow-lg hover:bg-[#12a850]">
-          Submit Application
+        <button type="submit" disabled={loading} className="h-[60px] bg-[#15C15D] text-white rounded-full font-semibold shadow-lg hover:bg-[#12a850] flex items-center justify-center disabled:opacity-70">
+          {loading ? <Loader2 className="animate-spin" /> : 'Submit Application'}
         </button>
       </div>
     </form>

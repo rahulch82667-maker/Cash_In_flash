@@ -19,18 +19,7 @@ import 'react-toastify/dist/ReactToastify.css';
 export default function Home() {
   return (
     <div className="flex flex-col w-full min-h-screen bg-white overflow-x-hidden">
-      <ToastContainer
-        position="top-right"
-        autoClose={5000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme="light"
-      />
+
       <Navbar />
       
       <main className="w-full">
