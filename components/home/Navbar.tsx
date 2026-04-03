@@ -115,7 +115,7 @@ const Navbar = () => {
                     ]
                   : [
                       { label: "Tools", path: "/tools" },
-                      { label: "FAQ", path: "/faq" },
+                      { label: "FAQ", path: "/faqs" },
                       { label: "Glossary of financial terms", path: "/glossary" },
                       { label: "Contact", path: "/contact-us" },
                     ]
@@ -151,7 +151,7 @@ const Navbar = () => {
                 </h3>
                 <div className="flex flex-col gap-[17px]">
                   {[
-                    { label: "FAQs", path: "/faq" },
+                    { label: "FAQs", path: "/faqs" },
                     { label: "Glossary of financial terms", path: "/glossary" },
                   ].map((item) => (
                     <div
@@ -509,7 +509,7 @@ const Navbar = () => {
               >
                 TOOLS
               </h3>
-              <div onClick={() => { router.push("/faq"); setIsMobileMenuOpen(false); }} className="flex items-center gap-[7px] group cursor-pointer w-max">
+              <div onClick={() => { router.push("/faqs"); setIsMobileMenuOpen(false); }} className="flex items-center gap-[7px] group cursor-pointer w-max">
                 <span className="text-white font-medium text-[16px] leading-[19.2px] font-['Poppins'] group-hover:text-[#13EC6D]">
                   FAQs
                 </span>
