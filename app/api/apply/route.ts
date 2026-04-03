@@ -1,4 +1,4 @@
-import { NextResponse } from 'next/server';
+import { NextResponse, after } from 'next/server';
 import nodemailer from 'nodemailer';
 import dbConnect from '@/lib/db';
 import Application from '@/models/Application';
@@ -43,7 +43,7 @@ export async function POST(req: Request) {
     const paystubFileName = await processFile(paystub);
     const bankStatementFileName = await processFile(bankStatement);
 
-    // Save to MongoDB
+    // Prepare data
     const applicationData = {
         ...personalInfo,
         ...incomeInfo,
@@ -55,42 +55,57 @@ export async function POST(req: Request) {
         }
     };
     
+    // Create instance but don't await save yet to speed up response
     const application = new Application(applicationData);
-    await application.save();
+    const applicationId = application._id;
 
-    // Nodemailer transport setup
-    const transporter = nodemailer.createTransport({
-      host: process.env.EMAIL_HOST,
-      port: Number(process.env.EMAIL_PORT) || 587,
-      auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS,
-      },
+    // Use 'after' to background heavy tasks
+    after(async () => {
+        try {
+            // 1. Save to MongoDB
+            await application.save();
+            console.log("Application saved to database:", applicationId);
+
+            // 2. Send Email
+            if (process.env.EMAIL_USER && process.env.EMAIL_PASS) {
+                const transporter = nodemailer.createTransport({
+                    host: process.env.EMAIL_HOST,
+                    port: Number(process.env.EMAIL_PORT) || 587,
+                    auth: {
+                        user: process.env.EMAIL_USER,
+                        pass: process.env.EMAIL_PASS,
+                    },
+                });
+
+                const mailOptions = {
+                    from: process.env.EMAIL_USER,
+                    to: personalInfo.email,
+                    subject: 'Application Received - Cash In Flash',
+                    html: `
+                        <h2>Application Received!</h2>
+                        <p>Dear ${personalInfo.firstName},</p>
+                        <p>We have received your application for a loan of $${personalInfo.loanAmount}.</p>
+                        <p>Your application is currently being reviewed. We will contact you soon.</p>
+                        <br>
+                        <p>Thank you,</p>
+                        <p>Cash In Flash Team
+                    `,
+                    attachments: attachments,
+                };
+
+                await transporter.sendMail(mailOptions);
+                console.log("Confirmation email sent to:", personalInfo.email);
+            }
+        } catch (bgError) {
+            console.error("Background task error:", bgError);
+        }
     });
 
-    const mailOptions = {
-      from: process.env.EMAIL_USER,
-      to: personalInfo.email, // Send confirmation to user
-      subject: 'Application Received - Cash In Flash',
-      html: `
-        <h2>Application Received!</h2>
-        <p>Dear ${personalInfo.firstName},</p>
-        <p>We have received your application for a loan of $${personalInfo.loanAmount}.</p>
-        <p>Your application is currently being reviewed. We will contact you soon.</p>
-        <br>
-        <p>Thank you,</p>
-        <p>Cash In Flash Team</p>
-      `,
-      attachments: attachments,
-    };
+    return NextResponse.json({ 
+        message: 'Application submitted successfully', 
+        applicationId 
+    }, { status: 201 });
 
-    if (process.env.EMAIL_USER && process.env.EMAIL_PASS) {
-      transporter.sendMail(mailOptions).catch(err => console.error("Email failed to send:", err));
-    } else {
-      console.warn("EMAIL credentials missing, skipped sending email.");
-    }
-
-    return NextResponse.json({ message: 'Application submitted successfully', applicationId: application._id }, { status: 201 });
   } catch (error: any) {
     console.error('Error submitting application:', error);
     return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });

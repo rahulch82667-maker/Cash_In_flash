@@ -34,9 +34,10 @@ const DocumentsForm = ({ onBack }: { onBack: () => void; }) => {
         try {
           setIsProcessing(true);
           const options = {
-            maxSizeMB: 1,
-            maxWidthOrHeight: 1600,
+            maxSizeMB: 0.4,
+            maxWidthOrHeight: 1280,
             useWebWorker: true,
+            initialQuality: 0.6,
           };
           const compressedFile = await imageCompression(file, options);
           setter(new File([compressedFile], file.name, { type: compressedFile.type || file.type }));
