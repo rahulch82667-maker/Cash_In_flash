@@ -63,3 +63,53 @@ body {
 .slide-in-from-top-2 {
   animation-name: slideInFromTop;
 }
+
+/* Custom map marker styles */
+.custom-marker {
+  background: transparent;
+}
+
+.marker-pin {
+  width: 30px;
+  height: 30px;
+  border-radius: 50% 50% 50% 0;
+  background: #15C15D;
+  position: absolute;
+  transform: rotate(-45deg);
+  left: 50%;
+  top: 50%;
+  margin: -15px 0 0 -15px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+.marker-pin::after {
+  content: '';
+  width: 20px;
+  height: 20px;
+  margin: 5px 0 0 5px;
+  background: #fff;
+  position: absolute;
+  border-radius: 50%;
+}
+
+.marker-pin.selected {
+  background: #ff4444;
+  transform: rotate(-45deg) scale(1.2);
+}
+
+/* Leaflet map container */
+.leaflet-container {
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+.leaflet-popup-content-wrapper {
+  border-radius: 8px;
+  padding: 0;
+}
+
+.leaflet-popup-content {
+  margin: 0;
+  padding: 0;
+}

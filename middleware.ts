@@ -6,8 +6,6 @@ export function middleware(request: NextRequest) {
   const token = request.cookies.get("auth_token")?.value;
   const { pathname } = request.nextUrl;
 
-  // Protect login and register routes
-  // If the user already has an auth_token, redirect them to the home page
   if (token && (pathname === "/login" || pathname === "/register" || pathname === "/forgot-password" || pathname === "/reset-password")) {
     return NextResponse.redirect(new URL("/", request.url));
   }
