@@ -1,5 +1,9 @@
+'use client'
+
+import { useRouter } from 'next/navigation'
 
 const FAQHero = () => {
+  const router = useRouter();
   return (
     <section className="w-full bg-[#f9fafb] py-16 md:py-24 px-6 border-b border-gray-100">
       <div className="max-w-[1200px] mx-auto text-center">
@@ -11,7 +15,7 @@ const FAQHero = () => {
           Find answers to common questions about our payday loans, application process, and repayment options.
         </p>
         <div className="mt-10">
-            <button className="bg-[#15C15D] hover:bg-[#12a850] text-white font-semibold py-4 px-10 rounded-full text-[18px] transition-all shadow-lg active:scale-95">
+            <button onClick={() => router.push('/apply')} className="bg-[#15C15D] hover:bg-[#12a850] text-white font-semibold py-4 px-10 rounded-full text-[18px] transition-all shadow-lg active:scale-95">
               Apply now
             </button>
         </div>

@@ -2,8 +2,10 @@
 
 import Image from "next/image";
 import { CheckCircle2 } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 const Hero = () => {
+  const router = useRouter();
   return (
     <section
       className="relative w-full overflow-hidden flex justify-center items-center"
@@ -97,6 +99,7 @@ const Hero = () => {
                   background:
                     "linear-gradient(86.41deg, #15C15D 1.64%, #13EC6D 98.36%)",
                 }}
+                onClick={() => router.push("/apply")}
               >
                 Apply now
               </button>{" "}

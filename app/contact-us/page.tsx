@@ -10,9 +10,6 @@ export default function ContactUsPage() {
     <main className="min-h-screen bg-white flex flex-col">
       <Navbar />
       
-      {/* Adding a div wrapper with vertical padding (py) or 
-          margins (my) ensures no component overlaps the other.
-      */}
       <div className="flex-grow flex flex-col">
         <section className="py-10 md:py-16 mt-[50px]">
           <ContactHero />

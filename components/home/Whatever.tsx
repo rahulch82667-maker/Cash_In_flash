@@ -2,8 +2,11 @@
 
 import Image from "next/image";
 import { Star } from "lucide-react";
+import { useRouter } from 'next/navigation'
+
 
 const Whatever = () => {
+  const router = useRouter();
   return (
     <section className="relative w-full flex justify-center bg-white py-10 md:py-14 xl:py-20">
       {/* Main Container */}
@@ -123,6 +126,7 @@ const Whatever = () => {
                 fontSize: "16px",
                 fontWeight: 500,
               }}
+              onClick={() => router.push('/apply')}
             >
               Apply now
             </button>

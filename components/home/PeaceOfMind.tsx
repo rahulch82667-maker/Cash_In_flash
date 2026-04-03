@@ -1,6 +1,10 @@
+'use client'
+
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 const PeaceOfMind = () => {
+  const router = useRouter(); 
   return (
     <section
       className="relative flex flex-col items-center justify-center overflow-hidden w-full mt-[60px] lg:mt-[90px] px-4"
@@ -73,6 +77,7 @@ const PeaceOfMind = () => {
               fontSize: "16px",
               textAlign: "center",
             }}
+            onClick={() => router.push('/apply')}
           >
             Apply now
           </span>
