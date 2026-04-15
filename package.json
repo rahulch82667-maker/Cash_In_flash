@@ -16,6 +16,7 @@
     "browser-image-compression": "^2.0.2",
     "express-rate-limit": "^8.3.2",
     "formik": "^2.4.9",
+    "framer-motion": "^12.38.0",
     "jsonwebtoken": "^9.0.3",
     "leaflet": "^1.9.4",
     "lucide-react": "^1.6.0",
