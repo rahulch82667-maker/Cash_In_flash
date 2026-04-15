@@ -97,7 +97,7 @@ const LoginForm = () => {
         </div>
 
         {/* Login Card */}
-        <div className="bg-white border border-gray-200 rounded-md shadow-sm p-6 md:p-10">
+        <div className="bg-white rounded-md p-6 md:p-10">
           <form onSubmit={formik.handleSubmit} className="space-y-6">
             {/* Email Input */}
             <div className="flex flex-col gap-2">

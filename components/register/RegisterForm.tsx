@@ -89,7 +89,7 @@ const RegisterForm = () => {
         </div>
 
         {/* Register Card */}
-        <div className="bg-white border border-gray-200 rounded-md shadow-sm p-6 md:p-10">
+        <div className="bg-white rounded-md p-6 md:p-10">
           <h2 className="text-2xl font-bold text-gray-800 mb-8 text-center font-poppins">
             Create Your Account
           </h2>

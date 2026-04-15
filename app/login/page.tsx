@@ -9,11 +9,13 @@ export const metadata: Metadata = {
 
 export default function LoginPage() {
   return (
-    <main className="min-h-screen w-full flex">
-      <div className="w-full lg:w-1/2 min-h-screen flex items-center justify-center py-10 lg:py-20 bg-gray-50">
-        <LoginForm />
+    <main className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+      <div className="w-full max-w-[1200px] bg-white rounded-2xl shadow-xl flex overflow-hidden">
+        <AuthAnimation />
+        <div className="w-full lg:w-1/2 flex items-center justify-center py-10 lg:py-16">
+          <LoginForm />
+        </div>
       </div>
-      <AuthAnimation />
     </main>
   );
 }
